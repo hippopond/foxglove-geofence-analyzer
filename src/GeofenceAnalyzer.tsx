@@ -1,5 +1,5 @@
 import { PanelExtensionContext, Time } from "@foxglove/extension";
-import { ReactElement, useEffect, useLayoutEffect, useState, useRef } from "react";
+import { ReactElement, useEffect, useLayoutEffect, useState, useRef, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import { MapContainer, TileLayer, Polygon, Polyline, CircleMarker, Tooltip, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -83,6 +83,7 @@ function GeofenceAnalyzer({ context }: { context: PanelExtensionContext }): Reac
   }, [polygonPoints, gpsTopic, mapCenter, mapZoom, context]);
 
   const [trajectory, setTrajectory] = useState<TrajPoint[]>([]);
+  const [currentTimeSec, setCurrentTimeSec] = useState<number | null>(null);
   
   // Analysis state
   const [zoneStats, setZoneStats] = useState<ZoneStats[]>([]);
@@ -129,12 +130,39 @@ function GeofenceAnalyzer({ context }: { context: PanelExtensionContext }): Reac
           setTrajectory(prev => (prev.length === newPoints.length ? prev : newPoints));
         }
       }
+      
+      if (renderState.currentTime) {
+        setCurrentTimeSec(renderState.currentTime.sec + renderState.currentTime.nsec / 1e9);
+      }
     };
     
     context.watch("topics");
     context.watch("allFrames");
+    context.watch("currentTime");
     context.subscribe([{ topic: gpsTopicRef.current, preload: true }]);
   }, [context]);
+
+  const currentPos = useMemo(() => {
+    if (!currentTimeSec || trajectory.length === 0) return null;
+    let low = 0;
+    let high = trajectory.length - 1;
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const midPt = trajectory[mid];
+      if (!midPt) break;
+      if (midPt.timeSec < currentTimeSec) {
+        low = mid + 1;
+      } else if (midPt.timeSec > currentTimeSec) {
+        high = mid - 1;
+      } else {
+        return midPt;
+      }
+    }
+    const p1 = trajectory[Math.max(0, high)];
+    const p2 = trajectory[Math.min(trajectory.length - 1, low)];
+    if (!p1 || !p2) return null;
+    return Math.abs(p1.timeSec - currentTimeSec) < Math.abs(p2.timeSec - currentTimeSec) ? p1 : p2;
+  }, [currentTimeSec, trajectory]);
 
   useEffect(() => {
     renderDone?.();
@@ -259,7 +287,6 @@ function GeofenceAnalyzer({ context }: { context: PanelExtensionContext }): Reac
         boxSizing: "border-box",
         overflowY: "auto"
       }}>
-        <h3 style={{ margin: 0, padding: 0 }}>Geofence Analyzer</h3>
         
         <div>
           <label style={{ display: "block", marginBottom: "4px", fontSize: "14px", fontWeight: "bold" }}>
@@ -456,6 +483,19 @@ function GeofenceAnalyzer({ context }: { context: PanelExtensionContext }): Reac
               </CircleMarker>
             </div>
           ))}
+
+          {currentPos && (
+            <CircleMarker
+              center={[currentPos.lat, currentPos.lng]}
+              radius={8}
+              color="white"
+              fillColor="#007bff"
+              fillOpacity={1}
+              weight={2}
+            >
+              <Tooltip>Current Robot Position</Tooltip>
+            </CircleMarker>
+          )}
 
         </MapContainer>
       </div>
