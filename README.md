@@ -25,7 +25,7 @@ A Foxglove Studio Panel Extension that brings geospatial intelligence to robotic
 
 ## Installation
 
-1. Go to the [Releases](https://github.com/foxglove/extension-registry) page (or this repository's releases) and download the latest `.foxe` file.
+1. Go to the [Releases](https://github.com/hippopond/foxglove-geofence-analyzer/releases) page and download the latest `.foxe` file.
 2. Open Foxglove Studio and navigate to **Settings > Extensions**.
 3. Click **Install Extension** and select the downloaded `.foxe` file.
 4. Open a new panel in your Foxglove layout and select **Geofence Analyzer**.
