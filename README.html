@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>README.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<h1 id="foxglove-geofence-analyzer">Foxglove Geofence Analyzer</h1>
+<p>A Foxglove Studio Panel Extension that brings geospatial intelligence to robotics data. Draw virtual zones on a live map and instantly analyze when, where, and how fast your robot moved through them.</p>
+<figure>
+<img src="media/geofence_demo.gif" alt="Demo (Drawing a polygon, Clearing, Drawing another polygon, Analyzing, Jumping to Entry and Exit" /><figcaption aria-hidden="true">Demo (Drawing a polygon, Clearing, Drawing another polygon, Analyzing, Jumping to Entry and Exit</figcaption>
+</figure>
+<h2 id="example-use-cases">Example Use Cases</h2>
+<ul>
+<li><strong>Hazard &amp; Keep-Out Zones:</strong> Draw a polygon denoting a Hazard area to determine whether and when your robot enters it. See it visually and click the result to jump directly to the Entry/Exit timestamp.</li>
+<li><strong>Intersection &amp; Traffic Light Analysis (AVs):</strong> Draw a polygon around a complex four-way intersection. Instantly find the exact timestamps the car traversed it to evaluate your planner’s yielding and stop-line behavior.</li>
+<li><strong>Speed Limit &amp; School Zone Compliance:</strong> Because the tool calculates <em>Average Speed</em> inside the zone, you can draw a geofence around a known school zone or construction site to instantly verify if the autonomous vehicle respected the reduced speed limits.</li>
+<li><strong>Loading Dock Logistics (AMRs &amp; Delivery):</strong> Draw a zone around a warehouse loading bay or drop-off point. The tool’s <em>Duration</em> metric instantly tells you exactly how long the robot loitered or idled in the bay, helping analyze operational efficiency.</li>
+<li><strong>GPS “Urban Canyon” Dead Zones:</strong> Draw a geofence over a known tunnel or downtown area with tall buildings. Click the entry timestamp to instantly jump to your 3D LiDAR/Camera panels to see how your localization stack handled the sudden drop in GPS quality.</li>
+</ul>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li>🌎 <strong>Global City Search:</strong> Instantly fly the map anywhere in the world using free OpenStreetMap geocoding.</li>
+<li>📐 <strong>Interactive Geofencing:</strong> Click to draw custom polygons on the map.</li>
+<li>⚡️ <strong>Instant Analysis:</strong> Powered by <code>Turf.js</code> to instantly calculate <strong>Duration</strong>, Metric Distance, and Average <strong>Speed</strong> for every visit (displayed in the Sidebar Stats).</li>
+<li>⏱ <strong>Jump to Time, for both entry and exit:</strong> Click any Entry or Exit timestamp in the results to instantly synchronize your Foxglove 3D and Camera panels to that exact millisecond.</li>
+</ul>
+<p><img src="media/geofence_control.png" alt="Sidebar Stats" width="250" /></p>
+<h2 id="installation">Installation</h2>
+<ol type="1">
+<li>Go to the <a href="https://github.com/foxglove/extension-registry">Releases</a> page (or this repository’s releases) and download the latest <code>.foxe</code> file.</li>
+<li>Open Foxglove Studio and navigate to <strong>Settings &gt; Extensions</strong>.</li>
+<li>Click <strong>Install Extension</strong> and select the downloaded <code>.foxe</code> file.</li>
+<li>Open a new panel in your Foxglove layout and select <strong>Geofence Analyzer</strong>.</li>
+</ol>
+<h2 id="quick-start-guide">Quick Start Guide</h2>
+<ol type="1">
+<li><strong>Set Topic:</strong> Ensure the GPS Topic Name matches your recording (defaults to <code>/gps</code>).
+<ul>
+<li><em>Note: The topic must use the standard <code>foxglove.LocationFix</code> schema (or any custom message containing <code>latitude</code> and <code>longitude</code> fields). For example, in the converted nuScenes dataset, this is the <code>/gps</code> topic.</em></li>
+</ul></li>
+<li><strong>Find Location:</strong> Type a city name in the search box and click “Go” to quickly center the map.</li>
+<li><strong>Draw Zone:</strong> Click on the map to draw your geofence polygon (requires at least 3 points).</li>
+<li><strong>Analyze:</strong> Click the blue <strong>Analyze Zone</strong> button to instantly calculate all visits!</li>
+</ol>
+<h2 id="local-development">Local Development</h2>
+<p>If you want to modify or contribute to this extension:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clone the repository</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="op">&lt;</span>your-repo-url<span class="op">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> geofence-analyzer</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Install locally into your Foxglove Studio app for testing</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run local-install</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Package for release (generates the .foxe file)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run package</span></code></pre></div>
+
+</body>
+</html>
